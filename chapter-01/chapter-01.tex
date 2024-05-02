@@ -1,0 +1,53 @@
+% Plain TeX for a 1 page document
+
+\input opmac
+
+
+\margins/1 a4 (3,3,3,3.4)cm
+\typosize[9/10.5]
+\parindent=10pt
+\hyperlinks \Blue\Blue
+\activettchar"
+\def\intthook{\localcolor\Red}
+
+\tit Exercises from Chapter \#1
+
+\sec Equivalence exercises
+
+\begitems \style n
+* {\bf (b)} $\lambda xy.xz \equiv \lambda mn.mz$ 
+* {\bf (c)} $\lambda xy.xxy \equiv \lambda a.(\lambda b.aab)$
+* {\bf (b)} $\lambda xyz.zx \equiv \lambda tos.st$
+\enditems
+
+\sec Combinators
+
+\begitems \style n
+* {\bf Yes,} $\lambda x.xxx$ is a combinator.
+* {\bf No,} $\lambda xy.zx$ is not a combinator since $z$ is a free variable.
+* {\bf Yes,} $\lambda xyz.xy(zx)$ is a combinator.
+* {\bf Yes,} $\lambda xyz.xy(zxy)$ is a combinator.
+* {\bf No,} $\lambda xy.xy(zxy)$ is not a combinator since $z$ is a free variable.
+\enditems
+
+\sec Normal form or diverge?
+
+\begitems \style n
+* {\bf Normal form,} $\lambda x.xxx$ is already fully reduced.
+* {\bf Diverge,} $(\lambda z.zz)(\lambda y.yy)$ diverges.
+* {\bf Normal form,} $(\lambda x.xxx)z$ reduces to $zzz$.
+\enditems
+
+\sec Beta reduce
+
+\begitems \style n
+* $(\lambda abc.cba)zz(\lambda wv.w) \equiv z$
+* $(\lambda xy.xyy)(\lambda a.a)b \equiv bb$
+* $(\lambda y.y)(\lambda x.xx)(\lambda z.zq) \equiv qq$
+* $(\lambda z.z)(\lambda z.zz)(\lambda z.zy) \equiv yy$
+* $(\lambda xy.xyy)(\lambda y.y)y \equiv yy$
+* $(\lambda a.aa)(\lambda b.ba)c \equiv aac$
+* $(\lambda xyz.xz(yz))(\lambda x.z)(\lambda x.a) \equiv \lambda \beta.za$
+\enditems
+
+\bye

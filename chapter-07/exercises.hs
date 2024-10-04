@@ -242,23 +242,6 @@ foldBool3 _ y True = y
 g :: (a -> b) -> (a, c) -> (b, c) 
 g f (a, c) = (f a, c)
 
--- 4. For this next exercise, you’ll experiment with writing point-free versions of 
---    existing code. This involves some new information, so read the following 
---    explanation carefully.
--- Type classes are dispatched by type. `Read` is a type class like `Show`, but it is 
--- the dual or “opposite” of `Show`. In general, the `Read` type class isn’t something 
--- you should plan to use, but this exercise is structured to teach you something about 
--- the interaction between type classes and types.
--- The function `read` in the `Read` type class has the type:
---  read :: Read a => String -> a
--- Notice a pattern?
---  read :: Read a => String -> a
---  show :: Show a => a -> String
--- Type the following code into a source file. Then load it, and run it in GHCi to make 
--- sure you understand why the evaluation results in the answers you see:
--- (See arith4.hs)
 
--- 5. Next, write a point-free version of roundTrip. (n.b., this refers to the function 
---    definition, not to its application in main.)
-roundTripPF :: (Show a, Read a) => a -> a
-roundTripPF = read . show
+-- See arith4.hs for #4, #5, and #6
+

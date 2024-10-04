@@ -27,16 +27,16 @@ dividedBy num denom = go num denom 0
 -- (Eq a, Num a) => a -> a.
 
 triangleSum :: (Eq a, Num a) => a -> a
-triangleSum n 
-    | n == 1    = 1
-    | otherwise = n + triangleSum (n - 1)
--- I don't love this because it will fail for non-positive inputs. But we can't do
--- n < 1 case because we don't know that a implements Ord :(.
+triangleSum 1 = 1
+triangleSum n = n + triangleSum (n - 1)
 
--- 3. Write a function that multiplies two integral numbers using recursive summation. 
--- The type should be (Integral a) => a -> a -> a.
+-- 3. Write a function that multiplies two integral numbers using
+--    recursive summation. The type should be
+--     `(Integral a) => a -> a -> a
 
-multiplyBy :: (Integral a) => a -> a -> a
-multiplyBy n k
-    | k == 0 = 0
-    | k < 0 = 
+recProd :: (Integral a) => a -> a -> a
+recProd x y = go x y 0
+ where go x y carry
+        | x == 0 = carry
+        | x < 0 = go (x+1) y (carry - y)
+        | x > 0 = go (x-1) y (carry + y)

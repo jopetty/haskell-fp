@@ -344,3 +344,18 @@ myAny f (x:xs) = f x || myAny f xs
 
 myElem :: Eq a => a -> [a] -> Bool
 myElem a ls = myOr (map (==a) ls)
+
+myReverse :: [a] -> [a]
+myReverse [] = []
+myReverse (a:as) = myReverse as ++ [a]
+
+squish :: [[a]] -> [a]
+squish [] = []
+squish (a:as) = a ++ squish as
+
+squishMap :: (a -> [b]) -> [a] -> [b]
+squishMap _ [] = []
+squishMap f (x:xs) = f x ++ squishMap f xs
+
+squishAgain :: [[a]] -> [a]
+squishAgain = squishMap id

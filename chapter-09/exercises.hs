@@ -361,5 +361,15 @@ squishAgain :: [[a]] -> [a]
 squishAgain = squishMap id
 
 myMaximumBy :: (a -> a -> Ordering) -> [a] -> a
-myMaximumBy _ (x:[]) = x
+myMaximumBy _ (x:[])     = x
 myMaximumBy f (a:b:rest) = myMaximumBy f ([if f a b == GT then a else b] ++ rest)
+
+myMinimumBy :: (a -> a -> Ordering) -> [a] -> a
+myMinimumBy _ (x:[])     = x
+myMinimumBy f (a:b:rest) = myMinimumBy f ([if f a b == LT then a else b] ++ rest)
+
+myMaximum :: (Ord a) => [a] -> a
+myMaximum = myMaximumBy compare
+
+myMinimum :: (Ord a) => [a] -> a
+myMinimum = myMinimumBy compare

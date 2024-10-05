@@ -361,8 +361,5 @@ squishAgain :: [[a]] -> [a]
 squishAgain = squishMap id
 
 myMaximumBy :: (a -> a -> Ordering) -> [a] -> a
-myMaximumBy f xs
-    | null xs        = undefined
-    | length xs == 1 = head xs
-    | length xs == 2 = if f (head xs) (head (tail xs)) == GT then head xs else head (tail xs)
-    | otherwise = if f (head xs) (head (tail xs)) == GT then myMaximumBy f ([head xs] ++ tail (tail xs)) else myMaximumBy f (tail xs)
+myMaximumBy _ (x:[]) = x
+myMaximumBy f (a:b:rest) = myMaximumBy f ([if f a b == GT then a else b] ++ rest)

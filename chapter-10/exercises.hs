@@ -194,3 +194,7 @@ myOr = foldr (||) False
 -- fold, not point-free
 myAny :: (a -> Bool) -> [a] -> Bool
 myAny f = foldr ((||).f) False
+
+-- fold & PF
+myAny' :: (a -> Bool) -> [a] -> Bool
+myAny' = flip foldr False . ((||) .)

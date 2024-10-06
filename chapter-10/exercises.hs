@@ -77,6 +77,9 @@
 -- Exercises: Database processing
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use or" #-}
+{-# HLINT ignore "Use elem" #-}
+{-# HLINT ignore "Use concatMap" #-}
+{-# HLINT ignore "Use concat" #-}
 
 import Data.Time
 
@@ -187,10 +190,12 @@ seekritFunc' x =
 
 -- Rewriting functions using folds, ideally point-free
 
+-- 1. myOr
 -- fold & point-free
 myOr :: [Bool] -> Bool
 myOr = foldr (||) False
 
+-- 2. myAny
 -- fold, not point-free
 myAny :: (a -> Bool) -> [a] -> Bool
 myAny f = foldr ((||).f) False
@@ -198,3 +203,76 @@ myAny f = foldr ((||).f) False
 -- fold & PF
 myAny' :: (a -> Bool) -> [a] -> Bool
 myAny' = flip foldr False . ((||) .)
+
+-- 3. myElem
+-- fold
+myElem :: Eq a => a -> [a] -> Bool
+myElem = flip foldr False . ((||) . ) . (==)
+
+-- any
+myElem' :: Eq a => a -> [a] -> Bool
+myElem' = any . (==)
+
+-- 4. myReverse
+myReverse :: [a] -> [a]
+myReverse = foldl (flip (:)) []
+
+-- 5. myMap
+myMap :: (a -> b) -> [a] -> [b]
+-- myMap f = foldr (flip (\acc c -> f c : acc)) [] -- original
+-- myMap f = foldr ((:) . f) [] -- remove the lambda
+myMap = flip foldr [] . ((:) .) -- point free
+
+-- 6. myFilter w/ foldr
+myFilter :: (a -> Bool) -> [a] -> [a]
+-- myFilter pred ls = (foldr ((++) . (\a -> if pred a then [a] else [])) [] ) ls -- original
+-- myFilter pred = foldr ((++) . (\a -> if pred a then [a] else [])) [] -- eta reduce
+-- myFilter pred = foldr ((++) . (\a -> [a | pred a])) [] -- list comprehension
+-- myFilter pred = flip foldr [] ((++) . (\a -> [a | pred a])) -- flip
+myFilter = flip foldr [] . ((++) .) . (\f a -> [a | f a]) -- point free
+
+-- 7. squish
+squish :: [[a]] -> [a]
+squish = foldr (++) []
+
+-- 8. squishMap
+squishMap :: (a -> [b]) -> [a] -> [b]
+-- squishMap f ls = squish $ map f ls -- original
+-- squishMap f ls = foldr ((++) . f) [] ls -- write out squish def
+-- squishMap f = foldr ((++) . f) [] -- eta reduce
+-- squishMap f = flip foldr [] ((++) . f) -- flip args to prepare for pf
+squishMap = flip foldr [] . ((++) .) -- point free
+
+-- 9. squishAgain
+squishAgain :: [[a]] -> [a]
+squishAgain = squishMap id
+
+-- 10. myMaximumBy
+myMaximumBy :: (a -> a -> Ordering) -> [a] -> a
+
+-- original
+-- myMaximumBy pred ls = head $ foldr (\a b -> 
+--     case b of
+--         [] -> [a]
+--         (b:_) -> if pred a b == GT then [a] else [b]
+--     ) [] ls
+
+-- remove last argument
+myMaximumBy pred = head . foldr (\a b ->
+    case b of
+        [] -> [a]
+        (b:_) -> if pred a b == GT then [a] else [b]
+    ) []
+
+-- myMaximumBy pred = head . flip foldr [] (\a b ->
+--     case b of 
+--         [] -> [a]
+--         (b:_) -> if pred a b == GT then [a] else [b]
+--     )
+
+myMinimumBy :: (a -> a -> Ordering) -> [a] -> a
+myMinimumBy pred = head . foldr (\a b ->
+    case b of
+        [] -> [a]
+        (b:_) -> if pred a b == LT then [a] else [b]
+    ) []

@@ -927,3 +927,24 @@ coolestLtr xs = mostPopularLetter $ foldl (++) "" xs
 
 coolestWord :: [String] -> String
 coolestWord xs = fst $ maximumBy (comparing snd) (map (\g -> (head g, length g)) (group (sort (foldl (++) [] (map words xs)))))
+
+-- Hutton’s Razor
+
+-- 1. Your first task is to write the “eval” function that reduces an expression to a 
+--    final sum:
+
+data Expr
+    = Lit Integer
+    | Add Expr Expr
+
+eval :: Expr -> Integer
+eval e = case e of
+    Lit i -> i
+    Add l r -> (+) (eval l) (eval r)
+
+-- 2. Write a printer for the expressions:
+
+printExpr :: Expr -> String
+printExpr e = case e of
+    Lit i -> show i
+    Add l r -> printExpr l ++ " + " ++ printExpr r

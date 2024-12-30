@@ -1,10 +1,14 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use newtype instead of data" #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# HLINT ignore "Use concat" #-}
+{-# HLINT ignore "Use infix" #-}
 
 module Exercises where
 
 import Data.Int
+import Data.Char
+import Data.List (intersperse)
 
 
 -- data Bool   = False   | True
@@ -384,3 +388,502 @@ data RecordProduct a b =
         pfirst :: a,
         psecond :: b
     } deriving (Eq, Show)
+
+newtype NumCow =
+    NumCow Int 
+    deriving (Eq, Show)
+
+newtype NumPig =
+    NumPig Int
+    deriving (Eq, Show)
+
+data Farmhouse =
+    Farmhouse NumCow NumPig
+    deriving (Eq, Show)
+
+type Farmhouse' = Product NumCow NumPig
+
+-- Farmhouse and Farmhouse' are the same
+
+newtype NumSheep =
+    NumSheep Int
+    deriving (Eq, Show)
+
+data BigFarmhouse = 
+    BigFarmhouse NumCow NumPig NumSheep
+    deriving (Eq, Show)
+
+type BigFarmhouse' = Product NumCow (Product NumPig NumSheep)
+
+type Name = String
+type Age = Int
+type LovesMud = Bool
+type PoundsOfWool = Int
+
+data CowInfo =
+    CowInfo Name Age
+    deriving (Eq, Show)
+
+data PigInfo =
+    PigInfo Name Age LovesMud
+    deriving (Eq, Show)
+
+data SheepInfo =
+    SheepInfo Name Age PoundsOfWool
+    deriving (Eq, Show)
+
+data Animal = 
+    Cow CowInfo
+    | Pig PigInfo 
+    | Sheep SheepInfo
+    deriving (Eq, Show)
+
+type Animal' = Sum CowInfo (Sum PigInfo SheepInfo)
+
+data Twitter = 
+    Twitter deriving (Eq, Show)
+
+data AskFm = 
+    AskFm deriving (Eq, Show)
+
+socialNetwork :: Sum Twitter AskFm
+socialNetwork = First Twitter
+
+
+data OperatingSystem =
+    GnuPlusLinux
+    | OpenBSDPlusNevermindJustBSDStill
+    | Mac
+    | Windows
+    deriving (Eq, Show)
+
+data ProgLang =
+    Haskell 
+    | Agda
+    | Idris 
+    | PureScript
+    deriving (Eq, Show)
+
+data Programmer = 
+    Programmer {
+        os :: OperatingSystem,
+        lang :: ProgLang
+    }
+    deriving (Eq, Show)
+
+nineToFive :: Programmer
+nineToFive = Programmer {
+    os = Mac,
+    lang = Haskell
+}
+
+feelingWizardly :: Programmer
+feelingWizardly = Programmer {
+    lang = Agda,
+    os = GnuPlusLinux
+}
+
+-- Exercise: Programmers
+-- Write a function that generates all possible values of Programmer. Use the provided 
+-- lists of inhabitants of OperatingSystem and ProgLang:
+
+allOperatingSystems :: [OperatingSystem]
+allOperatingSystems =
+    [ GnuPlusLinux
+    , OpenBSDPlusNevermindJustBSDStill
+    , Mac
+    , Windows
+    ]
+
+allLanguages :: [ProgLang]
+allLanguages = 
+    [Haskell, Agda, Idris, PureScript]
+
+allProgrammers :: [Programmer]
+allProgrammers = [Programmer os lang | os <- allOperatingSystems, lang <- allLanguages]
+
+
+newtype Name' = Name' String deriving Show
+newtype Acres = Acres Int deriving Show
+
+-- FarmerType is a sum type
+data FarmerType = 
+      DairyFarmer
+    | WheatFarmer
+    | SoybeanFarmer
+    deriving Show
+
+-- Farmer is a product type
+data Farmer = 
+    Farmer Name' Acres FarmerType
+    deriving Show
+
+isDairyFarmer :: Farmer -> Bool
+isDairyFarmer (Farmer _ _ DairyFarmer) = True
+isDairyFarmer _ = False
+
+data FarmerRec = 
+    FarmerRec { 
+      name'  :: Name'
+    , acres :: Acres
+    , farmerType :: FarmerType }
+    deriving Show
+
+isDairyFarmerRec :: FarmerRec -> Bool
+isDairyFarmerRec farmer =
+    case farmerType farmer of
+        DairyFarmer -> True
+        _           -> False
+
+
+
+data Quantum = 
+      Yes
+    | No
+    | Both
+    deriving (Eq, Show)
+
+quantSum1 :: Either Quantum Quantum
+quantSum1 = Right Yes
+
+quantSum2 :: Either Quantum Quantum
+quantSum2 = Right No
+
+quantSum3 :: Either Quantum Quantum
+quantSum3 = Right Both
+
+quantSum4 :: Either Quantum Quantum
+quantSum4 = Left Yes
+
+quantSum5 :: Either Quantum Quantum
+quantSum5 = Left No
+
+quantSum6 :: Either Quantum Quantum
+quantSum6 = Left Both
+
+-- Consider the following function:
+
+convert :: Quantum -> Bool
+convert = undefined
+
+-- According to the equality of a -> b and b^a, there should be 2^3 or 8 
+-- implementations of this function. Does this hold? Write it out, and prove it for 
+-- yourself.
+
+convert1 :: Quantum -> Bool
+convert1 c = case c of
+    Yes -> True
+    No -> True
+    Both -> True
+
+convert2 :: Quantum -> Bool
+convert2 c = case c of
+    Yes -> True
+    No -> True
+    Both -> False
+
+
+convert3 :: Quantum -> Bool
+convert3 c = case c of
+    Yes -> True
+    No -> False
+    Both -> True
+
+convert4 :: Quantum -> Bool
+convert4 c = case c of
+    Yes -> False
+    No -> True
+    Both -> True
+
+convert5 :: Quantum -> Bool
+convert5 c = case c of
+    Yes -> True
+    No -> False
+    Both -> False
+
+convert6 :: Quantum -> Bool
+convert6 c = case c of
+    Yes -> False
+    No -> True
+    Both -> False
+
+convert7 :: Quantum -> Bool
+convert7 c = case c of
+    Yes -> False
+    No -> False
+    Both -> True
+
+
+convert8 :: Quantum -> Bool
+convert8 c = case c of
+    Yes -> False
+    No -> False
+    Both -> False
+
+-- Exercises: The Quad
+-- Determine how many unique inhabitants each type has.
+-- 
+
+-- 1.
+data Quad =
+      One
+    | Two
+    | Three
+    | Four
+    deriving (Eq, Show)
+
+-- How many different forms can this take?
+eQuad :: Either Quad Quad
+eQuad = undefined
+-- 4+4 = 8
+
+-- 2. 
+prodQuad :: (Quad, Quad)
+prodQuad = undefined
+-- 4*4 = 16
+
+-- 3. 
+funcQuad :: Quad -> Quad
+funcQuad = undefined
+-- 4^4 = 256
+
+-- 4. 
+prodTBool :: ( Bool, Bool, Bool)
+prodTBool = undefined
+-- 2*2*2 = 8
+
+-- 5. 
+gTwo :: Bool -> Bool -> Bool
+gTwo = undefined
+-- (2^2)^2 = 16
+
+-- 6.
+fTwo :: Bool -> Quad -> Quad
+fTwo = undefined
+-- (2^4)^4 = 65,536
+
+-- Higher kinds
+data Silly a b c d =
+    MkSilly a b c d deriving Show
+
+-- ghci> :k Silly
+-- Silly :: * -> * -> * -> * -> *
+
+data BinaryTree a =
+      Leaf
+    | Node ( BinaryTree a) a (BinaryTree a) 
+    deriving ( Eq, Ord, Show)
+
+insert' :: Ord a => a -> BinaryTree a -> BinaryTree a
+insert' b Leaf = Node Leaf b Leaf
+insert' b (Node left a right)
+    | b == a = Node left a right
+    | b < a  = Node (insert' b left) a right
+    | b > a  = Node left a (insert' b right) 
+
+-- Write map for BinaryTree
+mapTree :: (a -> b) -> BinaryTree a -> BinaryTree b
+mapTree f t = case t of 
+    Leaf -> Leaf
+    Node left a right -> Node (mapTree f left) (f a) (mapTree f right)
+
+testTree' :: BinaryTree Integer
+testTree' = Node (Node Leaf 3 Leaf ) 1 (Node Leaf 4 Leaf)
+
+mapExpected :: BinaryTree Integer
+mapExpected = Node (Node Leaf 4 Leaf) 2 (Node Leaf 5 Leaf)
+
+mapOkay :: IO ()
+mapOkay = 
+    if mapTree (+1) testTree' == mapExpected
+        then print "yup OK!"
+        else error "test failed!"
+
+-- Convert binary trees to lists
+preorder :: BinaryTree a -> [a]
+preorder t = case t of 
+    Leaf -> []
+    Node left v right -> [v] ++ preorder left ++ preorder right
+
+inorder :: BinaryTree a -> [a]
+inorder t = case t of
+    Leaf -> []
+    Node left v right -> preorder left ++ [v] ++ preorder right
+
+postorder :: BinaryTree a -> [a]
+postorder t = case t of
+    Leaf -> []
+    Node left v right -> preorder left ++ preorder right ++ [v]
+
+testTree :: BinaryTree Integer
+testTree =
+    Node (Node Leaf 1 Leaf)
+         2
+         (Node Leaf 3 Leaf)
+
+testPreorder :: IO ()
+testPreorder = 
+    if preorder testTree == [2,1,3]
+        then putStrLn "Preorder fine!"
+        else putStrLn "Bad news bears."
+
+testInorder :: IO ()
+testInorder = 
+    if inorder testTree == [1,2,3]
+        then putStrLn "Inorder fine!"
+        else putStrLn "Bad news bears."
+
+testPostorder :: IO ()
+testPostorder =
+    if postorder testTree == [1,3,2]
+        then putStrLn "Postorder fine!"
+        else putStrLn "Bad news bears."
+
+main :: IO ()
+main = do
+    testPreorder 
+    testInorder
+    testPostorder
+
+
+-- write foldr for BinaryTree
+foldTree :: (a -> b -> b) -> b -> BinaryTree a -> b
+foldTree f z t = case t of 
+    Leaf -> z
+    Node left v right -> foldTree f (foldTree f (f v z) left) right
+
+
+-- Chapter Exercises
+-- Multiple Choice
+
+-- 1. Given the following datatype:
+data Weekday = 
+      Monday
+    | Tuesday
+    | Wednesday 
+    | Thursday
+    | Friday
+-- Which of the following is true?
+-- (a) `Weekday` is a type with five data constructors.
+
+-- 2. With the same datatype definition in mind, what is the type of the following 
+-- function, `f` ?
+
+-- f Friday = "Miller Time"
+-- (c) f :: Weekday -> String
+
+-- 3. Types defined with the data keyword:
+--    (b) Must begin with a capital letter.
+
+-- 4. The function `g xs = xs !! (length xs - 1)`:
+--    (c)   Returns the final element of `xs`.
+--    I don't think it's (a) since it's not recursive, though it very well may not 
+--    terminate
+
+-- Ciphers
+-- see chapter-09/ciphers.hs
+
+-- Use as-patterns to implement the following functions:
+
+-- 1. This should return `True` if (and only if) all the values in the first list 
+--    appear in the second list, though they need not be contiguous:
+isSubseqOf :: (Eq a) => [a] -> [a] -> Bool
+isSubseqOf [] _ = True
+isSubseqOf _ [] = False
+isSubseqOf (x:xs) y@(_:ys) = elem x y && isSubseqOf xs ys
+
+-- 2. Split a sentence into words, then tuple each one with its capitalized form:
+capitalizeWords :: String -> [(String, String)]
+capitalizeWords t = map (\w@(f:rest) -> (w, toUpper f : rest)) (words t)
+
+-- Language exercises
+
+-- 1. Write a function that capitalizes a word:
+capitalizeWord :: String -> String
+capitalizeWord "" = ""
+capitalizeWord (f:rest) = toUpper f : rest
+
+-- 2. Write a function that capitalizes sentences in a paragraph. Recognize when a 
+--    new sentence has begun by checking for periods. Reuse the capitalizeWord function:
+capitalizeParagraph :: String -> String
+capitalizeParagraph t = restorePeriod t $ joinWithSpace $ map (capitalizeWord . stripSpace) (splitOn '.' t)
+
+-- See chapter-09/exercises.hs for original implementation
+splitOn :: Char -> String -> [String]
+splitOn c s
+    | s == "" = []
+    | otherwise = 
+        let first = takeWhile (/= c) s
+            rest = dropWhile (== c) (dropWhile (/= c) s)
+        in first : splitOn c rest
+
+stripSpace :: String -> String
+stripSpace s
+    | s == "" = ""
+    | head s == ' ' = tail s
+    | otherwise = s
+
+joinWithSpace :: [String] -> String
+joinWithSpace xs = foldr (++) "" (intersperse ". " xs)
+
+restorePeriod :: String -> String -> String
+restorePeriod original new
+    | original == "" = new
+    | otherwise = if original !! (length original - 1) == '.'
+        then new ++ "."
+        else new
+
+-- Phone Exercise
+
+-- validButtons = "1234567890*#"
+type Digit = Char
+
+-- Valid presses: 1 and up
+type Presses = Int
+
+data DaPhone = 
+    DaPhone [(Char, String)] 
+    deriving (Eq, Show)
+
+defaultLayout :: DaPhone
+defaultLayout = 
+    DaPhone [
+        ('1', ""),
+        ('2', "ABC"),
+        ('3', "DEF"),
+        ('4', "GHI"),
+        ('5', "JKL"),
+        ('6', "MNO"),
+        ('7', "PQRS"),
+        ('8', "TUV"),
+        ('9', "WXYZ"),
+        ('*', "^"),
+        ('0', "+ _"),
+        ('#', ".,")
+    ]
+
+reverseTaps :: DaPhone -> Char -> [(Digit, Presses)]
+reverseTaps (DaPhone []) _ = [('?', 0)]
+reverseTaps (DaPhone ((digit, letters):ls)) c = 
+    if elem (toUpper c) letters || c == digit
+        then charToTaps digit c letters
+        else reverseTaps (DaPhone ls) c
+
+charToTaps :: Digit -> Char -> String -> [(Digit, Presses)]
+charToTaps d t letters
+    | d == t = [(d, length letters + 1)]
+    | otherwise =
+        if elem t letters 
+            then 
+                if elem t "^+ _.," 
+                    then [(d, indexOf t letters)] 
+                    else [('*', 1), (d, indexOf t letters)]
+            else [(d, indexOf (toUpper t) letters)]
+    where indexOf target (l:ls) = if target == l then 1 else 1 + indexOf target ls
+
+cellPhonesDead :: DaPhone -> String -> [(Digit, Presses)]
+cellPhonesDead _ [] = []
+cellPhonesDead l (x:xs) = reverseTaps l x ++ cellPhonesDead l xs
+
+fingerTaps :: [(Digit, Presses)] -> Presses
+fingerTaps xs = sum (map snd xs)

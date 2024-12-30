@@ -19,3 +19,13 @@ caesar = caesar' 15
 
 unCaesar :: String -> String
 unCaesar = unCaesar' 15
+
+-- Vigenère (Chapter 11)
+
+vigenere :: String -> String -> String
+vigenere key text
+    | text == "" = ""
+    | key == "" = text
+    | otherwise = zipWith caesarChar keys text
+        where keys = [key !! (i `mod` length key) | i <- [0..length text -1]]
+              caesarChar k t = head (caesar' (ord k - ord 'A') [t])

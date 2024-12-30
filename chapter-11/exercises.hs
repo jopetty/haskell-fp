@@ -8,7 +8,8 @@ module Exercises where
 
 import Data.Int
 import Data.Char
-import Data.List (intersperse)
+import Data.List (group, maximumBy, intersperse, sort)
+import Data.Ord (comparing)
 
 
 -- data Bool   = False   | True
@@ -841,9 +842,30 @@ type Digit = Char
 -- Valid presses: 1 and up
 type Presses = Int
 
+-- 1. Create a data structure that captures the phone layout above. The data structure 
+--    should be able to express enough of how the layout works that you can use it to 
+--    dictate the behavior of the functions in the following exercises:
+
 data DaPhone = 
     DaPhone [(Char, String)] 
     deriving (Eq, Show)
+
+-- 2. Convert the following conversations into the key presses required to express 
+--    them. We’re going to suggest types and functions to complete, in order to 
+--    accomplish the goal, but they’re not obligatory. If you want to do it 
+--    differently, go right ahead:
+
+convo :: [ String]
+convo =
+    ["Wanna play 20 questions",
+     "Ya",
+     "U 1st haha",
+     "Lol OK. Have u ever tasted alcohol",
+     "Lol ya",
+     "Wow ur cool haha. Ur turn",
+     "OK. Do u think I am pretty Lol",
+     "Lol ya",
+     "Just making sure rofl ur turn"]
 
 defaultLayout :: DaPhone
 defaultLayout = 
@@ -885,5 +907,23 @@ cellPhonesDead :: DaPhone -> String -> [(Digit, Presses)]
 cellPhonesDead _ [] = []
 cellPhonesDead l (x:xs) = reverseTaps l x ++ cellPhonesDead l xs
 
+-- 3. How many times do digits need to be pressed for each message?
+
 fingerTaps :: [(Digit, Presses)] -> Presses
 fingerTaps xs = sum (map snd xs)
+
+-- 4. What is the most popular letter for each message? What was its cost? You’ll want 
+--    to combine `reverseTaps` and `fingerTaps to figure` out what it costs in taps. 
+--    `reverseTaps` is a list, because you need to press a different button in order to 
+--    get capitals.
+
+-- mostPopularLetter :: String -> Char 
+mostPopularLetter s = fst $ maximumBy (comparing snd) (map (\g -> (head g, length g)) (group (sort s)))
+
+-- 5. What is the most popular letter overall? What is the overall most popular word?
+
+coolestLtr :: [String] -> Char
+coolestLtr xs = mostPopularLetter $ foldl (++) "" xs
+
+coolestWord :: [String] -> String
+coolestWord xs = fst $ maximumBy (comparing snd) (map (\g -> (head g, length g)) (group (sort (foldl (++) [] (map words xs)))))
